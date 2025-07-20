@@ -1,0 +1,41 @@
+{
+    "README": [
+        "There are two sections.",
+        "  chords: is for configuration of the CHORDS connection.",
+        "  airthings: is for configuration of the Airthings API connection.",
+        "  ",
+        "The Airthings device serial number is used to identify the device in the devices section.",
+        "chords_short_name is used to map Airthings sensor names to CHORDS variable names."
+    ],
+    "verbose": false,
+    "query_interval_secs": 250,
+    "chords": {
+        "enabled": true,
+        "api_email": "chords_api_email.com",
+        "test": false,
+        "api_key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "host": "chords-host.com",
+        "devices": {
+            "2960125153": {
+                "enabled": true,
+                "inst_id": "250"
+            }
+        },
+        "chords_short_name": {
+            "radonShortTermAvg": "radon",
+            "humidity": "rh",
+            "temp": "tdry",
+            "co2": "co2",
+            "voc": "voc",
+            "pressure": "pres",
+            "pm25": "pm25",
+            "pm1": "pm1",
+            "battery": "vbat"
+        }
+    },
+    "airthings": {
+        "device_id": "iiiiiiiiiiiiiiii",
+        "client_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        "client_secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    }
+}
