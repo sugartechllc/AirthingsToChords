@@ -42,7 +42,6 @@ def radon_units_correction(value):
     Convert radon units from Bq/m3 to pCi/L.
     1 Bq/m3 = 0.027 pCi/L
     """
-
     return f"{float(value) * 0.027027:.4g}"
 
 if __name__ == "__main__":
@@ -59,44 +58,51 @@ if __name__ == "__main__":
     sleep_time = config["query_interval_secs"]
 
     while True:
-        devices = airthings.update_devices()
-        if config["verbose"]:
-            print(f"{devices}")
-        for device_id, device_info in devices.items():
-            obs_time = device_info.recorded
-            device_sn = device_info.serial_number
-            if device_sn in config["chords"]["devices"] and config["chords"]["devices"][device_sn]["enabled"]:
+        try:
+            devices = airthings.update_devices()
+            if config["verbose"]:
+                print(f"{devices}")
+            for device_id, device_info in devices.items():
+                obs_time = device_info.recorded
+                device_sn = device_info.serial_number
+                if device_sn in config["chords"]["devices"] and config["chords"]["devices"][device_sn]["enabled"]:
 
-                # Only save data when there is a new observation time
-                if obs_time != last_time:
-                    last_time = obs_time
+                    # Only save data when there is a new observation time
+                    if obs_time != last_time:
+                        last_time = obs_time
 
-                    # Prepare the tokens to send to CHORDS
-                    chords_tokens = {
-                        "api_key": config["chords"]["api_key"],
-                        "api_email": config["chords"]["api_email"],
-                        "host": config["chords"]["host"],
-                        "at": obs_time,
-                        "inst_id": config["chords"]["devices"][device_sn]["inst_id"],
-                        "vars": {}
-                    }
+                        # Prepare the tokens to send to CHORDS
+                        chords_tokens = {
+                            "api_key": config["chords"]["api_key"],
+                            "api_email": config["chords"]["api_email"],
+                            "host": config["chords"]["host"],
+                            "at": obs_time,
+                            "inst_id": config["chords"]["devices"][device_sn]["inst_id"],
+                            "vars": {}
+                        }
 
-                    # Iterate through sensors and map to CHORDS variables
-                    for sensor in device_info.sensors:
-                        if sensor.sensor_type in config["chords"]["chords_short_name"]:
-                            short_name = config["chords"]["chords_short_name"][sensor.sensor_type]
-                            chords_tokens['vars'][short_name] = sensor.value
-                    # Send data to CHORDS
-                    if 'radon' in chords_tokens['vars']:
-                        # Convert radon units from Bq/m3 to pCi/L
-                        chords_tokens['vars']['radon'] = radon_units_correction(chords_tokens['vars']['radon']) 
-                    print(f"{chords_tokens}")
+                        # Iterate through sensors and map to CHORDS variables
+                        for sensor in device_info.sensors:
+                            if sensor.sensor_type in config["chords"]["chords_short_name"]:
+                                short_name = config["chords"]["chords_short_name"][sensor.sensor_type]
+                                chords_tokens['vars'][short_name] = sensor.value
+                        if 'radon' in chords_tokens['vars']:
+                            # Convert radon units from Bq/m3 to pCi/L
+                            chords_tokens['vars']['radon'] = radon_units_correction(chords_tokens['vars']['radon']) 
 
-                    # Check again after the normal sleep time
-                    sleep_time = config["query_interval_secs"]
-                else:
-                    # Not a new observation so check again in a minute
-                    print(f"No new data for device {device_sn} at {obs_time}, short sleep.")
-                    sleep_time = 60
+                        # Send data to CHORDS
+                        print(f"{chords_tokens}")
+
+                        # Check again after the normal sleep time
+                        sleep_time = config["query_interval_secs"]
+                    else:
+                        # Not a new observation so check again in a minute
+                        print(f"{time.gmtime()} No new data for device {device_sn} at {obs_time}, short sleep.")
+                        sleep_time = 60
+
+        except Exception as e:
+            print(f"Exception: {e}")
+            print("Retrying in 60 seconds...")
+            time.sleep(60)
 
         time.sleep(sleep_time)
