@@ -5,20 +5,24 @@
         "  airthings: is for configuration of the Airthings API connection.",
         "  ",
         "The Airthings device serial number is used to identify the device in the devices section.",
-        "chords_short_name is used to map Airthings sensor names to CHORDS variable names."
+        "chords_short_name is used to map Airthings sensor names to CHORDS variable names.",
+        " ",
+        "Set the query_interval_secs to something less than the nominal reporting interval,",
+        "so queries don't occur right when the device is making an update or the device has reported early,",
+        "but not so short that we exceed the rate limits of the Airthings API."
     ],
     "verbose": false,
     "query_interval_secs": 250,
     "chords": {
         "enabled": true,
-        "api_email": "chords_api_email.com",
+        "api_email": "user@example.com",
         "test": false,
-        "api_key": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "host": "chords-host.com",
+        "api_key": "OBFUSCATED_API_KEY",
+        "host": "example.com",
         "devices": {
-            "2960125153": {
+            "0000000000": {
                 "enabled": true,
-                "inst_id": "250"
+                "inst_id": "000"
             }
         },
         "chords_short_name": {
@@ -34,8 +38,8 @@
         }
     },
     "airthings": {
-        "device_id": "iiiiiiiiiiiiiiii",
-        "client_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        "client_secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        "device_id": "0000000000",
+        "client_id": "OBFUSCATED_CLIENT_ID",
+        "client_secret": "OBFUSCATED_CLIENT_SECRET"
     }
 }
