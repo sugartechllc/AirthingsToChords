@@ -2,9 +2,10 @@ from operator import add
 import json
 import argparse
 import os
+import time
 
 from airthings_sdk import Airthings
-import time
+import pychords.tochords as tochords
 
 def load_config():
 
@@ -23,8 +24,15 @@ def load_config():
         default=False,
         help="Enable verbose output"
     )
+    parser.add_argument(
+        "-t", "--test", action="store_true",
+        default=False,
+        help="Run in test mode (no data sent to CHORDS)"
+    )
+
     args = parser.parse_args()
     config["verbose"] = args.verbose
+    config["test"] = args.test
 
     if not os.path.isfile(args.config):
         raise FileNotFoundError(f"Configuration file {args.config} not found.")
@@ -46,17 +54,20 @@ def radon_units_correction(value):
 
 if __name__ == "__main__":
 
+    print("Starting Airthings to CHORDS data transfer...")
+
     config = load_config()
     client_id = config["airthings"]["client_id"]
     client_secret = config["airthings"]["client_secret"]
 
-    airthings = Airthings(
-        client_id=client_id, client_secret=client_secret, is_metric=True
-    )
+    # Start the CHORDS sender thread
+    tochords.startSender()
+
+    # Initialize the Airthings client
+    airthings = Airthings(client_id=client_id, client_secret=client_secret, is_metric=True)
 
     last_time = None
     sleep_time = config["query_interval_secs"]
-
     while True:
         try:
             devices = airthings.update_devices()
@@ -76,10 +87,11 @@ if __name__ == "__main__":
                             "api_key": config["chords"]["api_key"],
                             "api_email": config["chords"]["api_email"],
                             "host": config["chords"]["host"],
-                            "at": obs_time,
                             "inst_id": config["chords"]["devices"][device_sn]["inst_id"],
                             "vars": {}
                         }
+
+                        chords_tokens['vars']['at'] = obs_time
 
                         # Iterate through sensors and map to CHORDS variables
                         for sensor in device_info.sensors:
@@ -91,18 +103,22 @@ if __name__ == "__main__":
                             chords_tokens['vars']['radon'] = radon_units_correction(chords_tokens['vars']['radon']) 
 
                         # Send data to CHORDS
-                        print(f"{chords_tokens}")
+                        uri = tochords.buildURI(config['chords']['host'], chords_tokens)
+                        if config["test"]:
+                            print(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())} Test mode: would send URI: {uri}")
+                        else:
+                            tochords.submitURI(uri, 10*24*6)
 
                         # Check again after the normal sleep time
                         sleep_time = config["query_interval_secs"]
                     else:
                         # Not a new observation so check again in a minute
-                        print(f"{time.gmtime()} No new data for device {device_sn} at {obs_time}, short sleep.")
+                        print(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())} No new data for device {device_sn} (last data time: {obs_time}), sleeping for 60 seconds.")
                         sleep_time = 60
 
         except Exception as e:
-            print(f"Exception: {e}")
-            print("Retrying in 60 seconds...")
-            time.sleep(60)
+            print(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())} Exception: {e}")
+            print("I can't go on, I'm exiting now.")
+            break
 
         time.sleep(sleep_time)

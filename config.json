@@ -13,6 +13,7 @@
     ],
     "verbose": false,
     "query_interval_secs": 250,
+    "test": false,
     "chords": {
         "enabled": true,
         "api_email": "user@example.com",
