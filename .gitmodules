@@ -1,3 +1,3 @@
 [submodule "pychords"]
 	path = pychords
-	url = https://github.com/sugartechllc/AirthingsToChords.git
+	url = https://github.com/sugartechllc/pychords.git
