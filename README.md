@@ -19,11 +19,11 @@ _Python >= v3.10 is required_
 
 ```sh
 git clone --recurse https://github.com/sugartechllc/AirthingsToChords.git
- cd  AirthingsToChords
- python3 -m venv ~/venv.airthingstochords
- source ~/venv.airthingstochords/bin/activate
- install airthings-sdk/api/python/
- pip3 install requests attrs
+cd  AirthingsToChords
+python3 -m venv ~/venv.airthingstochords
+source ~/venv.airthingstochords/bin/activate
+install airthings-sdk/api/python/
+pip3 install requests attrs
 ```
 
 ### Authorization
@@ -42,6 +42,11 @@ source ~/venv.airthingstochords/bin/activate
 cd AirthingsToChords
 python3 AirthingsToChords.py -c <config_file>
 ```
+
+The service definition `airthingstochords.service` is provided, which runs the `airthingstochords.sh` script.
+This script in turn activates the virtual environment, and runs `AirthingsToChords.py`.
+It has a restart specified, so that when `AirthingsToChords.py` terminates on an authorization
+failure, it is rerun.
 
 ## Resources
 
