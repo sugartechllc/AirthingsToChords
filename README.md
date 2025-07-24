@@ -13,17 +13,19 @@ to look around to eventually find the [dashboard link](https://dashboard.airthin
 
 ## Instructions
 
-### Airthings-sdk
+### Installation
 
 _Python >= v3.10 is required_
 
-Download the Airthings api, and install the airthings-sdk python modules and dependencies.
 ```sh
-cd ~/
-git clone git@github.com:Airthings/airthings-sdk.git
-pip3 install airthings-sdk/api/python
-pip3 install -r requirements.txt
+git clone --recurse https://github.com/sugartechllc/AirthingsToChords.git
+ cd  AirthingsToChords
+ python3 -m venv ~/venv.airthingstochords
+ source ~/venv.airthingstochords/bin/activate
+ install airthings-sdk/api/python/
+ pip3 install requests attrs
 ```
+
 ### Authorization
 
 [Obtain the client id and client secret](https://help.airthings.com/en/articles/4510990-integrations-airthings-api) from Airthings.
@@ -36,6 +38,8 @@ don't make it publicly visible.)
 ### Running
 
 ```sh
+source ~/venv.airthingstochords/bin/activate
+cd AirthingsToChords
 python3 AirthingsToChords.py -c <config_file>
 ```
 
