@@ -1,3 +1,6 @@
 [submodule "pychords"]
 	path = pychords
 	url = https://github.com/sugartechllc/pychords.git
+[submodule "airthings-sdk"]
+	path = airthings-sdk
+	url = https://github.com/Airthings/airthings-sdk.git
