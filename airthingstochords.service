@@ -1,0 +1,19 @@
+# Create a systemd service file for AirthingsToChords
+# It expects to find a python virtual environment and a configuration file
+# in the specified paths.
+
+[Unit]
+Description=AirthingsToChords Service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+User=pi
+Restart=always
+RestartSec=10
+Type=simple
+WorkingDirectory=/home/pi/AirthingsToChords
+ExecStart=/home/pi/AirthingsToChords/airthingstochords.sh /home/pi/AirthingsToChords/venv.airthingstochords /home/pi/AirthingsToChords.json
+
+[Install]
+WantedBy=multi-user.target
