@@ -8,7 +8,7 @@ fi
 
 VENV_DIR="$1"
 CONFIG_FILE="$2"
-PYTHON_FILE="airthingstochords.py"
+PYTHON_FILE="AirthingsToChords.py"
 
 if [ ! -d "$VENV_DIR" ]; then
     echo "Virtual environment directory not found: $VENV_DIR"
