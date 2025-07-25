@@ -39,7 +39,6 @@
         }
     },
     "airthings": {
-        "device_id": "0000000000",
         "client_id": "OBFUSCATED_CLIENT_ID",
         "client_secret": "OBFUSCATED_CLIENT_SECRET"
     }
